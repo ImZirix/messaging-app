@@ -6,10 +6,31 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique
+  password         String
+  username         String    @unique
+  avatar           String?
+  bio              String?
+  sentMessages     Message[] @relation("sentMessages")
+  receivedMessages Message[] @relation("receivedMessages")
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  text       String
+  createdAt  DateTime @default(now())
+  sender     User     @relation("sentMessages", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User     @relation("receivedMessages", fields: [receiverId], references: [id])
+  receiverId String
+  userId     String?
 }
