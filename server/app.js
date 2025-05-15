@@ -9,6 +9,7 @@ const app = express();
 // Routes imports
 import messageRoutes from "./routes/messageRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import usersRoutes from "./routes/usersRoutes.js";
 
 // Middleware
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use((err, req, res, next) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/users", usersRoutes);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(

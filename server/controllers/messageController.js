@@ -63,3 +63,32 @@ export const getMessages = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+export const getMessagesBetweenUsers = async (req, res) => {
+  const currentUserId = req.user.id;
+  const otherUserId = req.params.otherUserId;
+
+  try {
+    const messages = await prisma.message.findMany({
+      where: {
+        OR: [
+          { senderId: currentUserId, receiverId: otherUserId },
+          { senderId: otherUserId, receiverId: currentUserId },
+        ],
+      },
+      orderBy: { createdAt: "asc" },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
+    res.json(messages);
+  } catch (err) {
+    console.error("Error fetching messages: ", err);
+    res.status(500).json({ error: "Could not fetch messages" });
+  }
+};
