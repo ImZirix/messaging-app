@@ -34,7 +34,10 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, username: true, password: true },
+    });
 
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -46,8 +49,10 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    const { password: _, ...safeUser } = user;
+
     const token = generateToken(user);
-    res.status(200).json({ token });
+    res.status(200).json({ token, user: safeUser });
   } catch (err) {
     console.log("Error creating user", err);
     res.status(500).json({ error: "Something went wrong" });

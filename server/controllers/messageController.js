@@ -12,10 +12,11 @@ export const sendMessage = async (req, res) => {
         receiver: { connect: { id: receiverId } },
       },
       include: {
-        sender: { select: { username: true, avatar: true } },
-        receiver: { select: { username: true, avatar: true } },
+        sender: { select: { id: true, username: true, avatar: true } },
+        receiver: { select: { id: true, username: true, avatar: true } },
       },
     });
+
     res.status(201).json(message);
   } catch (err) {
     console.error(err);
